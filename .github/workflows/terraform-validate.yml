@@ -1,0 +1,57 @@
+name: terraform-validate
+
+# Static validation for the AWS Terraform stack: fmt + init -backend=false
+# + validate, for every module and every env. CI has no state bucket, so
+# the backend-init step is intentionally skipped via -backend=false.
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '.github/workflows/terraform-validate.yml'
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: fmt + validate
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: terraform fmt -check
+        run: terraform fmt -check -recursive
+
+      - name: Validate modules
+        run: |
+          shopt -s nullglob
+          for d in modules/*/; do
+            if [ ! -f "${d}versions.tf" ] && [ ! -f "${d}main.tf" ]; then
+              echo "skipping $d (no terraform files yet — skeleton)"
+              continue
+            fi
+            echo "::group::$d"
+            (cd "$d" && terraform init -backend=false -input=false && terraform validate)
+            echo "::endgroup::"
+          done
+
+      - name: Validate envs
+        run: |
+          shopt -s nullglob
+          for d in envs/*/ global/; do
+            if [ ! -d "$d" ] || [ ! -f "${d}versions.tf" ]; then
+              echo "skipping $d (no versions.tf yet)"
+              continue
+            fi
+            echo "::group::$d"
+            (cd "$d" && terraform init -backend=false -input=false && terraform validate)
+            echo "::endgroup::"
+          done
