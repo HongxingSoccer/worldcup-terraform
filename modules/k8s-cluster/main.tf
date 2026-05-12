@@ -1,6 +1,6 @@
 # Skeleton — replace with provider-specific resource (aws_eks_cluster, alicloud_cs_managed_kubernetes, etc.)
 variable "environment" { type = string }
-variable "region"      { type = string }
+variable "region" { type = string }
 
 # Example — keep commented until provider is chosen.
 # resource "aws_eks_cluster" "this" {

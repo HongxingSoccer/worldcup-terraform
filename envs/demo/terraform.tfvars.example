@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and fill in real values.
+
+demo_account_id = "222222222222"
+public_domain   = "demo.wcp.example.com"
+
+# aws_region    = "us-east-1"   # default
