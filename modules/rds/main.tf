@@ -1,6 +1,6 @@
 # Skeleton — managed PostgreSQL 16, multi-AZ, encrypted at rest.
 variable "environment" { type = string }
-variable "region"      { type = string }
+variable "region" { type = string }
 
 # resource "aws_db_instance" "wcp" {
 #   identifier            = "wcp-${var.environment}"
