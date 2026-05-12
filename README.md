@@ -1,15 +1,21 @@
-# Terraform (Phase 3 baseline)
+# `worldcup-terraform` — AWS infrastructure
 
-AWS infrastructure for the World Cup 2026 Predictor. Phase 3 in this PR
-ships only the **registry + object-storage layer** (ECR + three S3 buckets)
-plus skeletons for the management-account `global/` stack. Everything else
-(VPC, EKS, RDS, ElastiCache, MSK, Secrets Manager, GHA OIDC role, Route 53)
-is pre-staged with empty files and TODO comments — they land in later phases.
+Terraform stack that provisions every AWS resource the World Cup 2026
+Predictor depends on. Currently a sibling directory inside the
+`HongxingSoccer/Project` monorepo; **scheduled to be extracted into its
+own GitHub repo** (`worldcup-terraform`), which is why it lives at the
+top level instead of under `worldcup-predictor/deploy/`.
+
+Phase 3 ships only the **registry + object-storage layer** (ECR + three
+S3 buckets) plus skeletons for the management-account `global/` stack.
+Everything else (VPC, EKS, RDS, ElastiCache, MSK, Secrets Manager,
+GHA OIDC role, Route 53) is pre-staged with empty files and TODO
+comments — they land in later phases.
 
 ## Layout
 
 ```
-deploy/terraform/
+worldcup-terraform/
 ├── README.md                    ← this file
 ├── .gitignore                   ← state, locks, .terraform/, *.tfvars
 │
@@ -70,7 +76,7 @@ aws dynamodb create-table --table-name wcp-tf-locks \
 ## Local workflow
 
 ```sh
-cd deploy/terraform/envs/dev
+cd worldcup-terraform/envs/dev
 cp terraform.tfvars.example terraform.tfvars
 # Fill in dev_account_id with the real 12-digit ID.
 
@@ -106,7 +112,7 @@ suffix is `substr(account_id, -4, 4)`.
 ## CI validation
 
 `.github/workflows/terraform-validate.yml` triggers on PRs that touch
-`deploy/terraform/**`. It:
+`worldcup-terraform/**`. It:
 
 1. Installs Terraform 1.6
 2. Runs `terraform fmt -check -recursive`
